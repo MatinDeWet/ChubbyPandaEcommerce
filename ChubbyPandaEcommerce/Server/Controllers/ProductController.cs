@@ -29,5 +29,12 @@ namespace ChubbyPandaEcommerce.Server.Controllers
             var result = await _productService.GetProductAsync(productId);
             return Ok(result);
         }
+
+        [HttpGet("Category/{categoryUrl}")]
+        public async Task<ActionResult<ServiceResponse<Product>>> GetProductByCategory(string categoryUrl)
+        {
+            var result = await _productService.GetProductByCategory(categoryUrl);
+            return Ok(result);
+        }
     }
 }

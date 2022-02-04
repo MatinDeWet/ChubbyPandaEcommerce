@@ -1,6 +1,7 @@
 global using ChubbyPandaEcommerce.Shared;
 using ChubbyPandaEcommerce.Server.Data;
 using ChubbyPandaEcommerce.Server.Services.ProductService;
+using ChubbyPandaEcommerce.Server.Services.CategoryService;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,7 @@ builder.Services.AddSwaggerGen();
 
 //add services
 builder.Services.AddScoped<IProductService,ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
 var app = builder.Build();
