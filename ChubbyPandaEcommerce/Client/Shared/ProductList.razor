@@ -3,7 +3,7 @@
 
 @if (_productService.products == null || _productService.products.Count == 0)
 {
-   <span>Loading Products...</span> 
+   <span>@_productService.Message</span> 
 }
 else
 {
@@ -21,11 +21,17 @@ else
                       <h4 class="mb-0">@product.Title</h4>
                 </a>
                 <p>@product.Description</p>
-                <h5 class="price">R @product.Price</h5>
+                <h5 class="price">@GetPriceText(product)</h5>
               </div>
           </li> 
        } 
     </ul>
+    @for (var i = 1; i <= _productService.PageCount; i++)
+   {
+       <a class="btn
+          @(i == _productService.CurrentPage ? "btn-info" : "btn-outline-info") page-selection" 
+          href="/search/@_productService.LastSearchText/@i">@i</a>
+   }
 }
 
 @code {
@@ -36,5 +42,19 @@ else
     public void Dispose()
     {
         _productService.ProductsChanged -= StateHasChanged;
+    }
+
+    private string GetPriceText(Product product)
+    {
+        var variant = product.Variants;
+        if (variant.Count == 0)
+        {
+            return string.Empty;
+        }
+        if (variant.Count == 1)
+        {
+            return $"R{variant[0].Price}";
+        }
+        return $"Starting at R{variant.Min(v => v.Price)}";
     }
 }

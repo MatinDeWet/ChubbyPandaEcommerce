@@ -1,0 +1,64 @@
+﻿@page "/login"
+@inject IAuthService _authService
+@inject ILocalStorageService _localStorage
+@inject ICartService _cartService
+@inject NavigationManager _navigationManager
+@inject AuthenticationStateProvider _authenticationStateProvider
+
+<PageTitle>Login</PageTitle>
+
+<h3>Login</h3>
+
+<EditForm Model="user" OnValidSubmit="@HandleLogin">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <lable for="email">Email</lable>
+        <InputText id="email" @bind-Value="user.Email" class="form-control" />
+        <ValidationMessage For="@(()=>user.Email)"/>
+    </div>
+    <div class="mb-3">
+        <lable for="password">Password</lable>
+        <InputText id="password" @bind-Value="user.Password" class="form-control" type="password"/>
+        <ValidationMessage For="@(()=>user.Password)"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+<div class="text-danger">
+    <span>@Message</span>
+</div>
+
+@code {
+    private UserLogin user = new UserLogin();
+    private string Message = string.Empty;
+    private string returnUrl = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnurl", out var url));
+        {
+            returnUrl = url;
+        }
+    }
+
+
+    private async Task HandleLogin()
+    {
+        var result = await _authService.Login(user);
+        if (result.Success)
+        {
+            Message = string.Empty;
+            await _localStorage.SetItemAsync("authToken", result.Data);
+            await _authenticationStateProvider.GetAuthenticationStateAsync();
+            await _cartService.StoreCartItems(true);
+            await _cartService.GetCartItemCount();
+            _navigationManager.NavigateTo(returnUrl);
+        }
+        else
+        {
+            Message = result.Message;
+        }
+
+        
+    }
+}

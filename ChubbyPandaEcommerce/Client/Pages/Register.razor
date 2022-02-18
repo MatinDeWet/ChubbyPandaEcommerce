@@ -1,0 +1,51 @@
+﻿@page "/register"
+@inject IAuthService _authService
+@inject IJSRuntime JsRuntime
+
+<PageTitle>Regestration</PageTitle>
+
+<h3>Register</h3>
+
+<EditForm Model="user" OnValidSubmit="@HandleRegistration">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <lable for="email">Email</lable>
+        <InputText id="email" @bind-Value="user.Email" class="form-control" />
+        <ValidationMessage For="@(()=>user.Email)"/>
+    </div>
+    <div class="mb-3">
+        <lable for="password">Password</lable>
+        <InputText id="password" @bind-Value="user.Password" class="form-control" type="password"/>
+        <ValidationMessage For="@(()=>user.Password)"/>
+    </div>
+    <div class="mb-3">
+        <lable for="confirmPassword">Confirm Password</lable>
+        <InputText id="confirmPassword" @bind-Value="user.ConfirmPassword" class="form-control" type="password"/>
+        <ValidationMessage For="@(()=>user.ConfirmPassword)"/>
+    </div>
+    <div class="@messageCssClass">
+        <span>@message</span>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    UserRegister user = new UserRegister();
+    private string message { get; set; } = "";
+    private string messageCssClass { get; set; } = string.Empty;
+
+    private async Task HandleRegistration()
+    {
+        var result = await _authService.Register(user);
+        message = result.Message;
+        if (result.Success)
+        {
+            
+            messageCssClass = "text-success";
+        }
+        else
+        {
+            messageCssClass = "text-danger";
+        }
+    }
+}

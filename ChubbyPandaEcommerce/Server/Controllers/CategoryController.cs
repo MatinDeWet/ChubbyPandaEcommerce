@@ -1,4 +1,5 @@
 ﻿using ChubbyPandaEcommerce.Server.Services.CategoryService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,34 @@ namespace ChubbyPandaEcommerce.Server.Controllers
         public async Task<ActionResult<ServiceResponse<List<Category>>>> GetCategories()
         {
             var result = await _categoryService.GetCategoriesAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("admin"),Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Category>>>> GetAdminCategories()
+        {
+            var result = await _categoryService.GetAdminCategoriesAsync();
+            return Ok(result);
+        }
+
+        [HttpDelete("admin/{id}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Category>>>> DeleteCategories(int id)
+        {
+            var result = await _categoryService.DeleteCategoriesAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Category>>>> AddCategories(Category category)
+        {
+            var result = await _categoryService.AddCategoriesAsync(category);
+            return Ok(result);
+        }
+
+        [HttpPut("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Category>>>> UpdateCategories(Category category)
+        {
+            var result = await _categoryService.UpdateCategoriesAsync(category);
             return Ok(result);
         }
     }

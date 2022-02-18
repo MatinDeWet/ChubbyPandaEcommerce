@@ -1,0 +1,24 @@
+﻿@inject AuthenticationStateProvider _authStateProvider
+@using System.Security.Claims
+
+
+@if (authorised)
+{
+ <a href="admin/categories" class="dropdown-item">Categories</a>
+ <hr />
+}
+
+@code {
+    bool authorised = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        string role = (await _authStateProvider.GetAuthenticationStateAsync())
+                        .User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+        if(role.Contains("Admin"))
+        {
+            authorised = true;
+        }
+    }
+}

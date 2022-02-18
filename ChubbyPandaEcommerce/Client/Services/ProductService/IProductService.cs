@@ -7,7 +7,16 @@ namespace ChubbyPandaEcommerce.Client.Services.ProductService
         event Action ProductsChanged;
 
         List<Product> products { get; set; }
+        string Message { get; set; }
+        int CurrentPage { get; set; }
+        int PageCount { get; set; }
+        string LastSearchText { get; set; }
+
         Task GetProducts(string? categoryUrl = null);
         Task<ServiceResponse<Product>> GetProduct(int productId);
+
+        Task SearchProduct(string searchText, int page);
+        Task<List<string>> ProductSearchSuggestion(string searchText);
+
     }
 }

@@ -1,17 +1,39 @@
 ﻿@inject IProductService _productService
 @page "/"
+@page "/search/{searchText}/{page:int}"
 @page "/{categoryUrl}"
 
 <PageTitle>My Shop</PageTitle>
 
+@if (string.IsNullOrWhiteSpace(categoryUrl) && string.IsNullOrWhiteSpace(searchText))
+{
+    <FeaturedProducts />
+}
+
 <ProductList />
+
 
 @code{
     [Parameter]
     public string? categoryUrl { get; set; } = null;
 
+    [Parameter]
+    public string? searchText { get; set; } = null;
+
+    [Parameter]
+    public int page { get; set; } = 1;
+
     protected override async Task OnParametersSetAsync()
     {
-        await _productService.GetProducts(categoryUrl);
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            await _productService.SearchProduct(searchText,page);
+        }
+        else
+        {
+            await _productService.GetProducts(categoryUrl);
+        }
+
+        
     }
 }

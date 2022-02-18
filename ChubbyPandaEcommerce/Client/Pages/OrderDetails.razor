@@ -1,0 +1,78 @@
+﻿@page "/orders/{orderId:int}"
+@inject IOrderService _orderService
+
+<h3>OrderDetails</h3>
+
+@if(order == null)
+{
+    <span>Loading order</span>
+}
+else
+{
+    <div>
+        <section class="h-100 h-custom" style="background-color: #eee;">
+            <div class="container py-5 h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-lg-8 col-xl-6">
+                        <div class="card border-top border-bottom border-3" style="border-color: #5695c4 !important;">
+                            <div class="card-body p-5">
+                                <p class="lead fw-bold mb-5" style="color: #5695c4;">Purchase Reciept</p>
+
+                                <div class="row">
+                                    <div class="col mb-3">
+                                    <p class="small text-muted mb-1">@order.OrderDate</p>
+                                    <p>10 April 2021</p>
+                                    </div>
+                                    <div class="col mb-3">
+                                    <p class="small text-muted mb-1">Order Item Count</p>
+                                    <p>@order.Products.Count</p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-8 col-lg-9">
+                                        <p>Title</p>
+                                    </div>
+                                    <div class="col-md-4 col-lg-3">
+                                        <p>Price</p>
+                                    </div>
+                                </div>
+                                @foreach (var product in order.Products)
+                               {
+                                <div class="mx-n5 px-5 py-4" style="background-color: #f2f2f2;">
+                                    <div class="row">
+                                    <div class="col-md-8 col-lg-9">
+                                        <p>@product.Title</p>
+                                    </div>
+                                    <div class="col-md-4 col-lg-3">
+                                        <p>R @product.totalPrice</p>
+                                    </div>
+                                    </div>
+                                </div>
+                               }
+                                <div class="row my-4">
+                                    <div class="col-md-4 offset-md-8 col-lg-3 offset-lg-9">
+                                    <p class="lead fw-bold mb-0" style="color: #5695c4;">R @order.TotaslPrice</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int OrderId { get; set; }
+
+    OrderDetailsDto order = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        order = await _orderService.GetOrderDetails(OrderId);
+    }
+}

@@ -1,0 +1,47 @@
+﻿@page "/orders"
+@inject IOrderService _orderService
+
+<h3>Orders</h3>
+
+@if (orders == null)
+{
+    <span>Loading orders...</span>
+}
+else if(orders.Count == 0)
+{
+    <span>No orders found</span>
+}
+else
+{
+<div>
+    @foreach (var order in orders)
+   {
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="@order.ProductImageUrl" class="img-fluid rounded-start image" alt="@order.Product">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">@order.Product</h5>
+                <p class="card-text">Order date: @order.OrderDate</p>
+                <p class="card-text">Total: R @order.total</p>
+                <a href="orders/@order.Id"><p class="card-text"><small class="text-muted">Show more</small></p></a>
+              </div>
+            </div>
+          </div>
+        </div>
+   }
+</div>
+}
+
+
+@code {
+    List<OrderOverviewDto> orders = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        orders = await _orderService.GetOrders();
+    }
+
+}

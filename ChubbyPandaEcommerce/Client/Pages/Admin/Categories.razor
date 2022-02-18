@@ -1,0 +1,72 @@
+﻿@page "/admin/categories"
+@attribute [Authorize(Roles = "Admin")]
+@inject ICategoryService _caterogyService
+@implements IDisposable
+
+<h3>Categories</h3>
+
+<div class="header">
+    <div class="col">Name</div>
+    <div class="col">Url</div>
+    <div class="col">Visible</div>
+    <div class="col"></div>
+</div>
+@foreach (var category in _caterogyService.Admincategories)
+{
+    @if (category.Editing)
+   {
+       <EditForm Model="editingCategory" OnSubmit="UpdateCategory">
+           <div class="row">
+
+           </div>
+       </EditForm>
+   }
+}
+
+@code {
+    Category editingCategory = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await _caterogyService.GetAdminCategories();
+        _caterogyService.OnChange += StateHasChanged;
+    }
+
+
+    public void Dispose()
+    {
+        _caterogyService.OnChange -= StateHasChanged;
+    }
+
+
+    private void CreateNewCategory()
+    {
+        editingCategory = _caterogyService.CreateNewCategory();
+    }
+
+    private void EditCategory(Category category)
+    {
+        category.Editing = true;
+        editingCategory = category;
+    }
+
+    private async Task UpdateCategory()
+    {
+        if (editingCategory.IsNew)
+            await _caterogyService.AddCategory(editingCategory);
+        else
+            await _caterogyService.UpdateCategory(editingCategory);
+        editingCategory = new Category();
+    }
+
+    private async Task CancelEditing()
+    {
+        editingCategory = new Category();
+        await _caterogyService.GetAdminCategories();
+    }
+
+    private async Task DeleteCateGory(int id)
+    {
+        await _caterogyService.DeleteCategory(id);
+    }
+}
